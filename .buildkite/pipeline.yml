@@ -1,7 +1,7 @@
 steps:
   - label: "Checkout Code"
     commands:
-      - git clone <your-repo-url> .
+      - git clone https://github.com/tth3007/golang-demo.git .
   
   - label: "Build Go Project"
     commands:
