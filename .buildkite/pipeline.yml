@@ -1,0 +1,27 @@
+steps:
+  - label: "Checkout Code"
+    commands:
+      - git clone <your-repo-url> .
+  
+  - label: "Build Go Project"
+    commands:
+      - go mod tidy
+      - go build -o myapp .
+  
+  - label: "Scan Code"
+    commands:
+      - go vet ./...
+      - staticcheck ./...
+  
+  - label: "Run Tests"
+    commands:
+      - go test -v ./...
+  
+  - label: "Build and Tag Docker Image"
+    commands:
+      - docker build -t myapp:latest .
+  
+  - label: "Push Docker Image"
+    commands:
+      - docker tag myapp:latest <your-docker-repo>/myapp:latest
+      - docker push <your-docker-repo>/myapp:latest
