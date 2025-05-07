@@ -1,5 +1,5 @@
 env:
-  APP_NAME: "demo"
+  APP_NAME: "app"
 #   ROLE_ARN: arn:aws:iam::$AWS_ACCOUNT_ID:role/my-role
 #   IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-repo
 #   CLUSTER: my-cluster
@@ -33,14 +33,15 @@ steps:
   # - label: "Upload tests results"
   #   commands:
   #     - buildkite-agent artifact upload results.xml
-  - label: "Verify working directory"
-    command: "pwd && ls -l"
 
-  # - label: ":docker: Build and Tag Docker Image"
-  #   key: "build-image"
-  #   depends_on: "test"
-  #   commands:
-  #     - docker build -t ${APP_NAME}:latest .
+  # - label: "Verify working directory"
+  #   command: "pwd && ls -l"
+
+  - label: ":docker: Build and Tag Docker Image"
+    key: "build-image"
+    depends_on: "test"
+    commands:
+      - docker build -t ${APP_NAME}:latest .
 
   # - label: "Push Image to ECR"
   #   key: "push-image"
