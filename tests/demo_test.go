@@ -9,7 +9,7 @@ func TestBookType(t *testing.T) {
 	longBook := structs.Book{
 		ID:    1,
 		Name:  "Demo",
-		Pages: 10,
+		Pages: 100,
 	}
 
 	var bookType string = longBook.GetType()
