@@ -15,6 +15,7 @@ steps:
   
   - label: "Run Tests and generate report"
     commands:
+      - go clean -modcache
       - go install gotest.tools/gotestsum/cmd/gotestsum@latest && gotestsum --junitfile results.xml --format standard go test -v ./tests
   
   - label: "Upload tests results"
