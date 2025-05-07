@@ -1,24 +1,46 @@
+# env:
+#   ROLE_ARN: arn:aws:iam::$AWS_ACCOUNT_ID:role/my-role
+#   IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-repo
+#   CLUSTER: my-cluster
+#   SERVICE: my-service
+#   AWS_PAGER: "" # Disable AWS CLI pagination in CI
+
 steps:
-  - label: "Checkout Code"
+  - label: ":pipeline: Starting pipeline"
+    key: "pipeline"
     commands:
-      - git clone https://github.com/tth3007/golang-demo.git
-    # plugins:
-    #   - git#v4.0.0:
-    #       repository: "https://github.com/tth3007/golang-demo.git"
-    #       branch: "main"
+      - buildkite-agent pipeline upload
+    agents:
+      - "queue=default"
+
+  - label: "Checkout Code"
+    key: "checkout"
+    depends_on: "pipeline"
+    # commands:
+    #   - git clone https://github.com/tth3007/golang-demo.git
+    plugins:
+      - git#v4.0.0:
+          repository: "https://github.com/tth3007/golang-demo.git"
+          branch: "main"
 
   
   - label: "Build Go Project"
+    key: "build"
+    depends_on: "checkout"
     commands:
       - go mod tidy
       - go build -o myapp .
   
   - label: "Scan Code"
+    key: "scan"
+    depends_on: "build"
     commands:
       - go vet ./...
       - staticcheck ./...
 
   - label: "Run tests"
+    key: "test"
+    depends_on: "scan"
     commands:
       - go test ./tests
   
@@ -31,10 +53,34 @@ steps:
   #     - buildkite-agent artifact upload results.xml
 
   - label: "Build and Tag Docker Image"
+    key: "build-image"
+    depends_on: "test"
     commands:
-      - docker build -t myapp:latest .
+      - docker build -t $IMAGE_NAME:latest .
+
+  # - label: "Push Image to ECR"
+  #   key: "push-image"
+  #   depends_on: "build-image"
+  #   commands:
+  #     - docker push $IMAGE_NAME:latest
+  #   plugins:
+  #     - aws-assume-role-with-web-identity#v1.0.0:
+  #         role_arn: $ROLE_ARN
+  #     - ecr#v2.8.0:
+  #         login: true
   
   # - label: "Push Docker Image"
   #   commands:
   #     - docker tag myapp:latest <your-docker-repo>/myapp:latest
   #     - docker push <your-docker-repo>/myapp:latest
+
+#===================== CD ================
+  # - label: ":ecs: Deploy service"
+  #   depends_on: "push-image"
+  #   timeout_in_minutes: 5
+  #   command: |
+  #     aws ecs update-service --cluster $CLUSTER --service $SERVICE --force-new-deployment
+  #     aws ecs wait services-stable --cluster $CLUSTER --service $SERVICE
+  #   plugins:
+  #     - aws-assume-role-with-web-identity#v1.0.0:
+  #         role_arn: $ROLE_ARN
