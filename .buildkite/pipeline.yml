@@ -1,4 +1,5 @@
-# env:
+env:
+  APP_NAME: "demo"
 #   ROLE_ARN: arn:aws:iam::$AWS_ACCOUNT_ID:role/my-role
 #   IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-repo
 #   CLUSTER: my-cluster
@@ -6,20 +7,20 @@
 #   AWS_PAGER: "" # Disable AWS CLI pagination in CI
 
 steps:
-  - label: "Build Go Project"
+  - label: ":golang: Build Go Project"
     key: "build"
     commands:
       - go mod tidy
-      - go build -o myapp .
+      - go build -o ${APP_NAME} .
   
-  - label: "Scan Code"
+  - label: ":osv-scanner: Scan Code"
     key: "scan"
     depends_on: "build"
     commands:
       - go vet ./...
       - staticcheck ./...
 
-  - label: "Run tests"
+  - label: ":testengine: Run tests"
     key: "test"
     depends_on: "scan"
     commands:
@@ -33,11 +34,11 @@ steps:
   #   commands:
   #     - buildkite-agent artifact upload results.xml
 
-  - label: "Build and Tag Docker Image"
+  - label: ":docker: Build and Tag Docker Image"
     key: "build-image"
     depends_on: "test"
     commands:
-      - docker build -t $IMAGE_NAME:latest .
+      - docker build -t ${APP_NAME}:latest .
 
   # - label: "Push Image to ECR"
   #   key: "push-image"
