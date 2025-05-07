@@ -12,15 +12,18 @@ steps:
     commands:
       - go vet ./...
       - staticcheck ./...
-  
-  - label: "Run Tests and generate report"
+
+  - label: "Run tests"
     commands:
-      - go clean -modcache
-      - go install gotest.tools/gotestsum/cmd/gotestsum@latest && gotestsum --junitfile results.xml --format standard go test -v ./tests
+      - go test ./tests
   
-  - label: "Upload tests results"
-    commands:
-      - buildkite-agent artifact upload results.xml
+  # - label: "Run Tests and generate report"
+  #   commands:
+  #     - go install gotest.tools/gotestsum/cmd/gotestsum@latest && gotestsum --junitfile results.xml --format standard go test -v ./tests
+  
+  # - label: "Upload tests results"
+  #   commands:
+  #     - buildkite-agent artifact upload results.xml
 
   - label: "Build and Tag Docker Image"
     commands:
