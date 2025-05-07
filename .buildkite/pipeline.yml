@@ -13,15 +13,19 @@ steps:
       - go vet ./...
       - staticcheck ./...
   
-  - label: "Run Tests"
+  - label: "Run Tests and generate report"
     commands:
-      - go test -v ./...
+      - go install gotest.tools/gotestsum/cmd/gotestsum@latest && gotestsum --junitfile results.xml --format standard go test -v ./tests
   
+  - label: "Upload tests results"
+    commands:
+      - buildkite-agent artifact upload results.xml
+
   - label: "Build and Tag Docker Image"
     commands:
       - docker build -t myapp:latest .
   
-  - label: "Push Docker Image"
-    commands:
-      - docker tag myapp:latest <your-docker-repo>/myapp:latest
-      - docker push <your-docker-repo>/myapp:latest
+  # - label: "Push Docker Image"
+  #   commands:
+  #     - docker tag myapp:latest <your-docker-repo>/myapp:latest
+  #     - docker push <your-docker-repo>/myapp:latest
