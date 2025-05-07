@@ -8,7 +8,6 @@
 steps:
   - label: "Build Go Project"
     key: "build"
-    depends_on: "checkout"
     commands:
       - go mod tidy
       - go build -o myapp .
