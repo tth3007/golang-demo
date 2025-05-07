@@ -6,23 +6,6 @@
 #   AWS_PAGER: "" # Disable AWS CLI pagination in CI
 
 steps:
-  # - label: ":pipeline: Starting pipeline"
-  #   key: "pipeline"
-  #   commands:
-  #     - buildkite-agent pipeline upload
-  #   agents:
-  #     - "queue=default"
-
-  - label: "Checkout Code"
-    key: "checkout"
-    # commands:
-    #   - git clone https://github.com/tth3007/golang-demo.git
-    plugins:
-      - git#v5.0.0:
-          repository: "https://github.com/tth3007/golang-demo.git"
-          branch: "main"
-
-  
   - label: "Build Go Project"
     key: "build"
     depends_on: "checkout"
