@@ -1,5 +1,5 @@
 env:
-  APP_NAME: "app"
+  APP_NAME: "myapp"
 #   ROLE_ARN: arn:aws:iam::$AWS_ACCOUNT_ID:role/my-role
 #   IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-repo
 #   CLUSTER: my-cluster
