@@ -38,7 +38,7 @@ steps:
     key: "build-image"
     depends_on: "test"
     commands:
-      - docker build -t ${APP_NAME}:latest .
+      - docker build -t ./${APP_NAME}:latest .
 
   # - label: "Push Image to ECR"
   #   key: "push-image"
