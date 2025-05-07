@@ -1,7 +1,9 @@
 steps:
   - label: "Checkout Code"
-    commands:
-      - git clone https://github.com/tth3007/golang-demo.git .
+    plugins:
+      - git#v4.0.0:
+          repository: "https://github.com/tth3007/golang-demo.git"
+          branch: "main"
   
   - label: "Build Go Project"
     commands:
